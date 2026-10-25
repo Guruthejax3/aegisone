@@ -1,6 +1,7 @@
 # AegisOne application
 
-A responsive security operations dashboard inspired by the supplied Stitch screens, integrated with its local backend. The same Node server hosts the frontend and API, so browser requests use one origin.
+AI agents can do useful work, but they can also send messages, change files, or access data. The risk is that an agent might take an action that wasn’t intended.
+AegisOne is designed to check an agent’s proposed action before it happens. It can flag risky actions, require a separate person to approve them, and keep a record of what was reviewed. It's a responsive security operations dashboard inspired by the supplied Stitch screens, integrated with its local backend. The same Node server hosts the frontend and API, so browser requests use one origin.
 
 ## Start the app
 
