@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f4f6f8">
+<meta name="description" content="AegisOne action governance and safety operations console."><title>AegisOne · Safety operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="#overview"><span class="brand-mark"><img src="assets/logo.webp" alt=""></span><span><b>AegisOne</b><small>CONTROL PLANE</small></span></a>
+  <div class="workspace"><span class="workspace-icon">A</span><span><b>AegisOne workspace</b><small>Local environment</small></span><span class="chevron">⌄</span></div>
+  <div class="nav-caption">OPERATIONS &amp; DEFENSE</div>
+  <nav class="nav-list" aria-label="Main navigation">
+    <button class="nav-item active" data-view="overview"><span class="nav-ico">▦</span>Command center</button>
+    <button class="nav-item" data-view="traces"><span class="nav-ico">⌘</span>Agent intelligence</button>
+    <button class="nav-item" data-view="actions"><span class="nav-ico">♧</span>Consequence simulator</button>
+    <button class="nav-item" data-view="actions"><span class="nav-ico">⛨</span>Policy &amp; authorization</button>
+  </nav>
+  <div class="nav-caption nav-caption-lower">GOVERNANCE &amp; FORENSICS</div>
+  <nav class="nav-list" aria-label="Governance navigation">
+    <button class="nav-item" data-view="audit"><span class="nav-ico">▤</span>Evidence &amp; audit</button>
+    <button class="nav-item" data-view="evaluations"><span class="nav-ico">▧</span>Model intelligence</button>
+    <button class="nav-item" data-view="evaluations"><span class="nav-ico">♙</span>Red-team &amp; evaluation</button>
+    <button class="nav-item" data-view="overview"><span class="nav-ico">◉</span>Live observability</button>
+  </nav>
+  <div class="nav-caption nav-caption-lower">PLATFORM</div>
+  <nav class="nav-list" aria-label="Platform navigation">
+    <button class="nav-item" disabled aria-disabled="true" title="Not implemented in backend starter"><span class="nav-ico">⌘</span>Agents &amp; integrations</button>
+    <button class="nav-item" disabled aria-disabled="true" title="Not implemented in backend starter"><span class="nav-ico">↻</span>Recovery &amp; resilience</button>
+    <button class="nav-item" disabled aria-disabled="true" title="Not implemented in backend starter"><span class="nav-ico">⚖</span>Enterprise governance</button>
+    <button class="nav-item" id="sidebar-settings"><span class="nav-ico">☷</span>Settings</button>
+  </nav>  <div class="sidebar-bottom"><div class="env-card"><span class="live-dot"></span><div><b>Mock environment</b><small>No external side effects</small></div><span class="env-menu">···</span></div><button class="profile" id="open-settings"><span class="profile-avatar">AO</span><span><b>Operator</b><small>Configure connection</small></span><span class="chevron">⚙</span></button></div>
+</aside>
+<main class="main-area">
+<header class="topbar"><button class="mobile-menu" id="mobile-menu" aria-label="Open navigation">☰</button><div class="global-search"><span>⌕</span><input id="global-search" type="search" placeholder="Search audit events and session previews…" aria-label="Search audit events and session previews"><kbd>/</kbd></div><div class="breadcrumbs"><span>Workspace</span><span class="slash">/</span><b id="crumb">Overview</b></div><div class="top-actions"><span class="secure-label"><span class="live-dot"></span><span id="connection-label">Not connected</span></span><button class="icon-btn" title="Settings" id="settings-top">⚙</button><span class="top-avatar">AO</span></div></header>
+<div class="content">
+<section class="view active" id="view-overview">
+  <div class="page-heading"><div><div class="eyebrow">OPERATIONS &amp; DEFENSE <span class="eyebrow-line"></span> <span id="today"></span></div><h1>Command Center</h1><p>Review agent activity, assess risk, and keep every action accountable.</p></div><button class="button primary" data-go="actions"><span>＋</span> New action preview</button></div>
+  <div class="notice"><span class="notice-icon">✓</span><div><b>Protected execution is active</b><p>Every action is evaluated before execution. Commits write to a mock outbox only.</p></div><span class="notice-tag">MOCK ONLY</span></div>
+  <div class="metric-grid">
+    <article class="metric-card"><div class="metric-top"><span>Actions reviewed</span><span class="metric-icon violet">⌘</span></div><div class="metric-value" id="metric-actions">—</div><div class="metric-foot"><span class="metric-hint">All time</span><span class="mini-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div></article>
+    <article class="metric-card"><div class="metric-top"><span>Awaiting approval</span><span class="metric-icon amber">◷</span></div><div class="metric-value" id="metric-pending">—</div><div class="metric-foot"><span class="metric-hint">Separate approver required</span><span class="metric-chip amber-text">REVIEW</span></div></article>
+    <article class="metric-card"><div class="metric-top"><span>Trace records</span><span class="metric-icon blue">◎</span></div><div class="metric-value" id="metric-traces">—</div><div class="metric-foot"><span class="metric-hint">Evidence-linked activity</span><span class="metric-chip blue-text">TRACKED</span></div></article>
+    <article class="metric-card"><div class="metric-top"><span>Audit integrity</span><span class="metric-icon green">⌁</span></div><div class="metric-value small-value" id="metric-integrity">Not checked</div><div class="metric-foot"><span class="metric-hint" id="integrity-detail">Verify the event chain</span><button class="text-button" id="verify-audit">Verify now →</button></div></article>
+  </div>
+  <div class="command-grid">
+    <article class="panel risk-distribution"><div class="panel-heading"><div><h3>Preview risk distribution</h3><p>Action previews created in this browser session</p></div><span class="metric-hint" id="preview-total">0 previews</span></div><div class="risk-legend"><span><i class="green-bullet"></i>Allow</span><span><i class="amber-bullet"></i>Approval</span><span><i class="red-bullet"></i>Blocked</span></div><div class="distribution-bar" id="distribution-bar"><span class="dist-allow"></span><span class="dist-approval"></span><span class="dist-block"></span></div><div class="distribution-list" id="distribution-list"><div class="empty-state">Create an action preview to see its policy decision here.</div></div></article>
+    <article class="panel approval-queue"><div class="panel-heading"><div><h3>Urgent approvals queue</h3><p>Pending previews from this browser session</p></div><span class="status-pill amber-pill" id="pending-session-count">0 PENDING</span></div><div id="pending-preview-queue"><div class="empty-state">No pending previews in this session.</div></div></article>
+  </div>  <div class="section-heading"><div><h2>Recent activity</h2><p>Latest events recorded in the append-only audit trail.</p></div><button class="text-button" data-go="audit">View audit log →</button></div>
+  <div class="panel activity-panel"><div class="table-wrap"><table><thead><tr><th>EVENT</th><th>ACTOR</th><th>REFERENCE</th><th>TIME</th><th></th></tr></thead><tbody id="activity-rows"><tr><td colspan="5" class="empty-state">Connect to your AegisOne backend to load activity.</td></tr></tbody></table></div></div>
+  <div class="bottom-grid"><article class="panel health-panel"><div class="panel-heading"><div><h3>System health</h3><p>Backend services and model availability</p></div><span class="status-pill neutral" id="health-status">Offline</span></div><div class="health-list"><div><span><i class="health-bullet green-bullet"></i>Policy engine</span><b id="health-policy">—</b></div><div><span><i class="health-bullet blue-bullet"></i>Risk assessment</span><b id="health-risk">—</b></div><div><span><i class="health-bullet amber-bullet"></i>Reasoning model</span><b id="health-llm">—</b></div><div><span><i class="health-bullet gray-bullet"></i>Connectors</span><b>Mock only</b></div></div></article><article class="panel quick-panel"><div class="panel-heading"><div><h3>Quick actions</h3><p>Start a governed workflow</p></div></div><button class="quick-action" data-go="actions"><span class="quick-icon violet">⌘</span><span><b>Preview an action</b><small>Run risk and policy checks first</small></span><span class="quick-arrow">↗</span></button><button class="quick-action" data-go="traces"><span class="quick-icon blue">◎</span><span><b>Create an agent trace</b><small>Record instructions and evidence</small></span><span class="quick-arrow">↗</span></button></article></div>
+</section>
+<section class="view" id="view-actions">
+ <div class="page-heading"><div><div class="eyebrow">GOVERNED WORKFLOWS</div><h1>Action studio</h1><p>Preview an action, inspect its risk, then authorize it through the right controls.</p></div><span class="status-pill mock-pill">MOCK CONNECTORS</span></div>
+ <div class="studio-grid"><div class="panel form-panel"><div class="panel-heading"><div><h2>Propose an action</h2><p>Fields marked with <em>*</em> are required.</p></div><span class="step-count">STEP 01 <i>/</i> PREVIEW</span></div>
+ <form id="action-form" class="form-grid">
+  <label>Action type <em>*</em><select name="kind"><option value="email">Email</option><option value="file">File</option><option value="api">API</option><option value="database">Database</option></select></label>
+  <label>Operation <em>*</em><select name="operation" id="operation"><option value="send">Send</option><option value="draft">Draft</option></select></label>
+  <label class="full">Goal <em>*</em><input name="goal" required maxlength="160" value="Notify reviewer of the latest update" placeholder="What should this action accomplish?"></label>
+  <label>Tool <em>*</em><input name="tool" required value="mock-email" maxlength="160"></label>
+  <label>Resource <em>*</em><input name="resource" required value="mailbox/demo" maxlength="160"></label>
+  <label>Recipient <span class="optional">OPTIONAL</span><input name="recipient" value="reviewer@example.com" maxlength="160"></label>
+  <label>Data classification <em>*</em><select name="data_classification"><option value="public">Public</option><option value="internal" selected>Internal</option><option value="confidential">Confidential</option><option value="restricted">Restricted</option></select></label>
+  <label class="full">Content <span class="optional">OPTIONAL</span><textarea name="content" rows="3" maxlength="8000" placeholder="Payload or content to assess"></textarea></label>
+  <label class="full">Permissions <em>*</em><input name="permissions" required value="email:send" placeholder="Comma separated, e.g. email:send"></label>
+  <details class="advanced full"><summary>Advanced context <span>Evidence and preconditions</span></summary><div class="advanced-fields"><label>Evidence references<input name="evidence_refs" value="ticket:DEMO-001" placeholder="Comma separated"></label><label>Preconditions<input name="preconditions" placeholder="Comma separated"></label></div></details>
+  <div class="form-footer full"><span class="inline-hint">Preview expires in 10 minutes</span><button class="button primary" type="submit" id="preview-btn">Run safety preview <span>→</span></button></div>
+ </form></div>
+ <div class="panel preview-panel" id="preview-panel"><div class="preview-empty"><span class="preview-orb">✳</span><h3>Safety preview</h3><p>Your policy decision, risk factors, and possible outcomes will appear here.</p><div class="preview-checks"><span>✓ Risk scoring</span><span>✓ Policy evaluation</span><span>✓ Outcome simulation</span></div></div></div></div>
+ <div class="section-heading"><div><h2>Session previews</h2><p>Action previews created in this browser session.</p></div><span class="metric-hint">Not a server-wide action list</span></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>ACTION</th><th>GOAL</th><th>DECISION</th><th>STATUS</th><th></th></tr></thead><tbody id="action-rows"><tr><td colspan="5" class="empty-state">No previews yet. Create one above.</td></tr></tbody></table></div></div>
+</section>
+<section class="view" id="view-traces">
+ <div class="page-heading"><div><div class="eyebrow">OBSERVABILITY</div><h1>Trace explorer</h1><p>Capture an agent’s original instruction and follow its evidence trail.</p></div></div>
+ <div class="trace-layout"><div class="panel form-panel"><div class="panel-heading"><div><h2>Start a trace</h2><p>The backend redacts common secret patterns in stored text.</p></div><span class="metric-icon blue">◎</span></div><form id="trace-form" class="form-grid single"><label>Objective <em>*</em><input name="objective" required maxlength="1000" placeholder="What is the agent trying to accomplish?"></label><label>Original instruction <em>*</em><textarea name="original_instruction" rows="6" required maxlength="4000" placeholder="Paste the instruction that initiated this agent run"></textarea></label><div class="form-footer"><span class="inline-hint">Agent: demo-agent</span><button class="button primary" type="submit">Create trace →</button></div></form></div><div class="panel trace-info"><div class="trace-graphic"><span class="node n1">Instruction</span><span class="edge e1"></span><span class="node n2">Evidence</span><span class="edge e2"></span><span class="node n3">Action</span></div><h3>Evidence-aware provenance</h3><p>Trace events distinguish verified observations from inferred relationships, model explanations, and unknowns.</p><div class="legend"><span><i class="green-bullet"></i>Verified observation</span><span><i class="amber-bullet"></i>Inference or uncertainty</span></div></div></div>
+ <div class="section-heading"><div><h2>Created this session</h2><p>Open a trace by ID to review its events and causal links.</p></div></div><div class="panel trace-list" id="trace-list"><div class="empty-state">Trace records appear here after creation.</div></div>
+</section>
+<section class="view" id="view-evaluations">
+ <div class="page-heading"><div><div class="eyebrow">MODEL GOVERNANCE</div><h1>Evaluations</h1><p>Run the backend’s synthetic safety scenarios and inspect model availability.</p></div><button class="button primary" id="run-evaluation">Run evaluation <span>→</span></button></div>
+ <div class="notice amber-notice"><span class="notice-icon">i</span><div><b>Evaluation results are synthetic</b><p>They exercise illustrative policy and heuristic behavior. They are not a security guarantee or a trained model benchmark.</p></div><span class="notice-tag">SYNTHETIC V1</span></div>
+ <div class="section-heading"><div><h2>Available models</h2><p>Live availability reported by the connected backend.</p></div></div><div class="model-grid" id="model-grid"><div class="panel model-card"><span class="model-icon violet">✳</span><div><b>Connect backend</b><p>Model availability will load here.</p></div><span class="status-pill neutral">UNKNOWN</span></div></div>
+ <div class="section-heading"><div><h2>Evaluation runs</h2><p>Recent synthetic scenario runs.</p></div></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>RUN</th><th>SCENARIOS</th><th>POLICY ACCURACY</th><th>CREATED</th></tr></thead><tbody id="evaluation-rows"><tr><td colspan="4" class="empty-state">Connect to view evaluation history.</td></tr></tbody></table></div></div><div id="evaluation-results"></div>
+</section>
+<section class="view" id="view-audit">
+ <div class="page-heading"><div><div class="eyebrow">ACCOUNTABILITY</div><h1>Audit log</h1><p>Review the event chain and verify its cryptographic links.</p></div><button class="button secondary" id="verify-audit-page">⟲ Verify integrity</button></div>
+ <div class="audit-summary panel"><div class="audit-seal">⌁</div><div><b id="audit-verdict">Integrity not checked</b><p id="audit-summary-copy">Verify the audit chain against its event hashes.</p></div><span class="audit-count" id="audit-count">— EVENTS</span></div>
+ <div class="panel audit-panel"><div class="table-wrap"><table><thead><tr><th>EVENT</th><th>ACTOR</th><th>ACTION</th><th>TIME</th><th>CHAIN HASH</th></tr></thead><tbody id="audit-rows"><tr><td colspan="5" class="empty-state">Connect to load audit events.</td></tr></tbody></table></div></div><p class="footnote">The hash chain can reveal changed records. It cannot prevent a privileged operator from rewriting the database and recomputing the chain.</p>
+</section>
+<footer class="app-footer"><span>AEGISONE <i>·</i> SAFETY OPERATIONS</span><span>Deterministic checks · Human approval · Verifiable records</span></footer>
+</div></main></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="settings-dialog" id="settings-dialog"><form method="dialog" id="settings-form"><div class="dialog-head"><div><div class="eyebrow">CONNECTION</div><h2>Backend settings</h2></div><button class="icon-btn" value="cancel" aria-label="Close">×</button></div><p>Connect this interface to the local AegisOne API. Tokens are held in this browser session.</p><label>API base URL<input id="api-url" type="url" value="http://127.0.0.1:3001" placeholder="http://127.0.0.1:3001"></label><label>Operator bearer token<input id="api-token" type="password" autocomplete="off" placeholder="Paste operator token"></label><label>Approver bearer token <span class="optional">OPTIONAL · REQUIRED FOR EVALUATIONS</span><input id="api-approver-token" type="password" autocomplete="off" placeholder="Paste separate approver token"></label><div class="dialog-note"><b>Demo security note</b><span>Use the operator token for previews and commits. Use a separate approver token to approve actions. The backend currently supports mock connectors only.</span></div><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" id="save-settings" value="default">Connect backend</button></div></form></dialog>
+<dialog class="approval-dialog" id="approval-dialog"><form method="dialog" id="approval-form"><div class="dialog-head"><div><div class="eyebrow">SEPARATION OF DUTIES</div><h2>Approve action</h2></div><button class="icon-btn" value="cancel" aria-label="Close">×</button></div><p>Approver credentials must belong to a different identity than the action submitter.</p><input type="hidden" id="approval-action-id"><input type="hidden" id="approval-action-hash"><label>Approver bearer token<input id="approver-token" type="password" autocomplete="off" required placeholder="Paste separate approver token"></label><div class="dialog-actions"><button class="button secondary" value="cancel">Cancel</button><button class="button primary" id="approve-action" value="default">Approve exact action</button></div></form></dialog>
+<script src="main.js" defer></script>
+</body></html>
+
+
+
+

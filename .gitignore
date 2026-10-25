@@ -1,0 +1,12 @@
+node_modules/
+backend/node_modules/
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/*.sqlite
+backend/*.sqlite-*
+backend/*.db
+backend/server.log
+.DS_Store
+Thumbs.db
+~$*
