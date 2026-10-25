@@ -32,6 +32,60 @@ test('external email preview, separate approval, mock commit, audit verification
   assert.equal((f.db.prepare('select count(*) n from mock_outbox').get() as any).n,1); assert.equal((await (await f.request('/api/audit/verify')).json() as any).valid,true);
   assert.equal((await f.request(`/api/actions/${preview.action_id}/commit`,'op',{action_hash:preview.action_hash,preview_token:preview.preview_token})).status,409);
 });
+
+test('commit gate rejects recipient tampering after approval', async t => {
+  const f = await fixture();
+  t.after(f.close);
+
+  const p = await f.request('/api/actions/preview', 'op', {
+    action: goodAction({ recipient: 'outside@elsewhere.invalid' })
+  });
+  assert.equal(p.status, 201);
+  const preview = await p.json() as any;
+
+  const approval = await f.request(
+    `/api/actions/${preview.action_id}/approve`,
+    'ap',
+    { action_hash: preview.action_hash }
+  );
+  assert.equal(approval.status, 200);
+
+  // Simulate a changed recipient in the stored action.
+  const stored = f.db.prepare(
+    'SELECT action_json FROM actions WHERE id=?'
+  ).get(preview.action_id) as any;
+
+  const tamperedAction = {
+    ...JSON.parse(stored.action_json),
+    recipient: 'attacker@outside.invalid'
+  };
+
+  f.db.prepare(
+    'UPDATE actions SET action_json=? WHERE id=?'
+  ).run(JSON.stringify(tamperedAction), preview.action_id);
+
+  const commit = await f.request(
+    `/api/actions/${preview.action_id}/commit`,
+    'op',
+    {
+      action_hash: preview.action_hash,
+      preview_token: preview.preview_token
+    }
+  );
+
+  assert.equal(commit.status, 409);
+  assert.equal(
+    (await commit.json() as any).error,
+    'action_hash_mismatch'
+  );
+
+  const outbox = f.db.prepare(
+    'SELECT count(*) AS n FROM mock_outbox WHERE action_id=?'
+  ).get(preview.action_id) as any;
+
+  assert.equal(outbox.n, 0);
+});
+
 test('mandatory policy block cannot be approved even by approver',async t=>{
   const f=await fixture(); t.after(f.close); const p=await f.request('/api/actions/preview','op',{action:goodAction({recipient:'attacker@outside.invalid',data_classification:'restricted'})}); const preview=await p.json() as any;
   assert.equal(preview.policy.decision,'BLOCK'); assert.equal((await f.request(`/api/actions/${preview.action_id}/approve`,'ap',{action_hash:preview.action_hash})).status,403);
